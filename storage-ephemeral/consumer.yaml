@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: consumer
+  name: consumer
+spec:
+  volumes:
+    - name: shared-cm 
+      configMap:
+        name: cm1602
+  containers:
+  - image: bitnami/nginx
+    name: consumer
+    volumeMounts:
+    - name: shared-cm
+      mountPath: /var/src
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
