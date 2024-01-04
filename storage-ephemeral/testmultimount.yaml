@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: terminated
+  name: terminated
+spec:
+  volumes:
+  - name: config
+    secret:
+      secretName: config
+  containers:
+  - name: po1
+    image: mcr.microsoft.com/windows/servercore/insider:10.0.20348.1
+    command:
+      - powershell.exe
+      - -command
+      - while(1){sleep 2; ping -t localhost;}
+    volumeMounts:
+    - name: config
+      mountPath: /config/config1
+      subPath: config1
+      readOnly: true
+    - name: config
+      mountPath: /config/config2
+      subPath: config2
+      readOnly: true
+  - name: po2
+    image: mcr.microsoft.com/windows/servercore/insider:10.0.20348.1
+    command:
+      - powershell.exe
+      - -command
+      - while(1){sleep 2; ping -t localhost;}
+    volumeMounts:
+    - name: config
+      mountPath: /config/config1
+      subPath: config1
+    - name: config
+      mountPath: /config/config2
+      subPath: config2
+      readOnly: true
+---
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: config
+data:
+  config1: aGVsbG8gd29ybGQ=
+  config2: aGVsbG8gd29ybGQy
