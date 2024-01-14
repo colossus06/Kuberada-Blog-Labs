@@ -1,0 +1,62 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.238.1/containers/ubuntu
+{
+	"name": "Ubuntu",
+	"build": {
+		"dockerfile": "Dockerfile",
+		// Update 'VARIANT' to pick an Ubuntu version: jammy / ubuntu-22.04, focal / ubuntu-20.04, bionic /ubuntu-18.04
+		// Use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon.
+		"args": { "VARIANT": "ubuntu-22.04" }
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			//"settings": {},
+			//"devPort": {},
+			// Specify which VS Code extensions to install (List of IDs)
+			"extensions": [
+				"ms-dotnettools.csharp",
+				"tfsec.tfsec",
+                "ms-azuretools.vscode-docker"
+				]
+			}
+		},
+        "hostRequirements": {
+            "cpus": 4,
+            "memory": "8gb",
+            "storage": "32gb" 
+        },
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "/bin/bash .devcontainer/startup_script.sh",
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode",
+	"features": {
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "latest",
+			"helm": "latest",
+			"minikube": "latest"
+		},
+		"ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {
+			"version": "latest"
+		},
+		"ghcr.io/rio/features/k3d:1": {} ,
+        "git-lfs": "latest",
+		"github-cli": "latest",
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": true,
+			"azureDnsAutoDetection": true,
+			"installDockerBuildx": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "v2"
+		}
+
+	}
+    
+}
