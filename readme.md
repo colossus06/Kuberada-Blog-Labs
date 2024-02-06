@@ -25,9 +25,18 @@ Code Repositories: Access code samples to support your learning.
   <p><strong>Navigate to the labs here</strong> 👇</p>
   
   <a href="https://github.com/colossus06/kuberada-labs">
-    <img src="https://github.com/colossus06/kuberada-blog/blob/main/og/kuberada.png" alt="kuberada blog" width="300" height="300">
+    <img src="https://github.com/colossus06/kuberada-blog/blob/main/images/mylogo.png" alt="kuberada blog" width="300" height="300">
   </a>
 </div>
+
+<div style="text-align: center;">
+  <p><strong>Navigate to the blog here</strong> 👇</p>
+  
+  <a href="https://kuberada.devtechops.dev">
+    <img src="https://github.com/colossus06/kuberada-blog/blob/main/images/mylogo.png" alt="kuberada blog" width="300" height="300">
+  </a>
+</div>
+
 
 
 
