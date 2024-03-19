@@ -1,3 +1,4 @@
+
 # 🚀 Explore Kuberada Blog Labs Repository!
 
 Welcome to our Kuberada Blog Labs Repository – the go-to place for hands-on learning in Kubernetes and DevOps!
@@ -25,15 +26,17 @@ Code Repositories: Access code samples to support your learning.
   <p><strong>Navigate to the labs here</strong> 👇</p>
   
   <a href="https://github.com/colossus06/kuberada-labs">
-    <img src="https://github.com/colossus06/kuberada-blog/blob/main/images/mylogo.png" alt="kuberada blog" width="300" height="300">
+    <button class="btn btn-primary">Navigate to Labs</button>
   </a>
 </div>
+
+<br>
 
 <div style="text-align: center;">
   <p><strong>Navigate to the blog here</strong> 👇</p>
   
   <a href="https://kuberada.devtechops.dev">
-    <img src="https://github.com/colossus06/kuberada-blog/blob/main/images/mylogo.png" alt="kuberada blog" width="300" height="300">
+    <button class="btn btn-primary">Navigate to the Blog Articles</button>
   </a>
 </div>
 
