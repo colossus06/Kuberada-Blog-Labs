@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuberada-but-nginx
+  template:
+    metadata:
+      labels:
+        app: kuberada-but-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuberada-svc
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: kuberada-but-nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
