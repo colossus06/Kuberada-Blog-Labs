@@ -1,11 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: devops
-  namespace: argocd
+  name: frontend-python
+  namespace: $INGRESS_NAMESPACE
 spec:
   destination:
-    namespace: default
     server: 'https://kubernetes.default.svc'
   source:
     path: ./
