@@ -1,4 +1,4 @@
-**Simple Microservices App for CKAD/CKA Certification**
+# Simple Microservices App for CKAD/CKA Certification
 
 This microservices architecture application is designed to help you prepare for the CKAD/CKA certification exams. It consists of:
 
@@ -10,9 +10,11 @@ This microservices architecture application is designed to help you prepare for 
 1. Ensure you have Docker installed on your system.
 2. Clone the repository containing the Docker Compose files.
 3. Run the following command to build and start the application:
-   ```bash
-   docker-compose up -d --build
-   ```
+
+```bash
+docker-compose up -d --build
+```
+
 4. Once the containers are up and running, you can access the UI at `http://localhost:8080` and interact with the application.
 
 **Benefits:**
