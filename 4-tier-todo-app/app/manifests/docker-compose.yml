@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: elkakimmie/ckad-mysql:1.1.0
+    image: gulcantopcu/ckad-mysql:1.1.0
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: colo
@@ -25,23 +25,30 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - backend
+      - crud
     networks:
       - ckad
 
-  backend:
+  crud:
+    image: gulcantopcu/ckad-crud:1.1.0
     environment:
       MYSQL_HOST: mysql
       MYSQL_DB: ckad_crud
       MYSQL_USER: colo
       MYSQL_PASSWORD: colo
-    container_name: backend
-    build: ./backend
+    container_name: crud
     ports:
       - "5000:5000"
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - ckad
+  notification:
+    container_name: notification
+    image: gulcantopcu/ckad-notification:1.1.0
+    ports:
+      - "8083:8083"
     networks:
       - ckad
 

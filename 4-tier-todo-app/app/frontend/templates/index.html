@@ -11,17 +11,19 @@
 <body>
   <div class="container mt-5">
 
-        <h1>Welcome to the Task Manager!</h1>
+       <h1>Welcome to the Task Manager!</h1>
         <h4>What do you want to do today?</h4>
-        <p>This is an open-source three-tier microservices app designed for practicing Kubernetes exams and DevOps projects to get certified.</p>
-        <p>The backend is written in Python, the frontend in Go, and it uses MySQL for the database. Feel free to use and modify the code for your projects.</p>
-    
+        <p>This is an open-source four-tier microservices app designed by Gulcan Topcu for practicing Kubernetes exams and DevOps projects. </p>
+        <p>The backend is written in Python, the frontend in Go, mock notification service in Rust and MySQL for the database. Feel free to use and modify the code for your projects.</p>
+  
         <form id="taskForm" action="/tasks" method="post">
           <div class="form-group">
             <label for="taskName">Add a task name:</label>
             <input type="text" class="form-control" id="taskName" name="taskName">
           </div>
-          <button type="submit" class="btn btn-primary">Add Task</button>
+          <button type="submit" class="btn btn-primary" id="addTaskBtn">Add Task</button>
+          <button type="button" class="btn btn-secondary" id="getNotificationBtn">Get Notification</button>
+
         </form>
         <div class="row">
             <div class="col-md-6">
@@ -52,15 +54,22 @@
   </div>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    $(document).ready(function() {
-      $("#taskForm").submit(function(event) {
-        var taskName = $("#taskName").val();
-        if (!taskName.trim()) {
-          alert("Task name cannot be empty");
-          event.preventDefault(); // Prevent form submission
-        }
-      });
+  $(document).ready(function() {
+    $("#taskForm").submit(function(event) {
+      var taskName = $("#taskName").val();
+      if (!taskName.trim()) {
+        alert("Task name cannot be empty");
+        event.preventDefault(); // Prevent form submission
+      }
     });
+    $(document).ready(function() {
+    $("#getNotificationBtn").click(function () {
+      window.location.href = "/notification";
+    });
+  });
+
+  });
+
   </script>
 </body>
 </html>

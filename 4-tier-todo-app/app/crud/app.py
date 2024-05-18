@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify
 import mysql.connector
 import os
+from retry_utils import retry_on_operational_error
 
 app = Flask(__name__)
 db = mysql.connector.connect(
-    host="mysql",
-    # host=os.getenv('MYSQL_HOST', 'localhost'),  # Use the service name as the host
+    #kubernetes
+    host = 'mysql-svc',
+    #docker-compose
+    # host="mysql",
     user=os.getenv('MYSQL_USER', 'colo'),
     password=os.getenv('MYSQL_PASSWORD', 'colo'),
     database=os.getenv('MYSQL_DB', 'ckad_crud'),
@@ -20,12 +23,19 @@ class Task:
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
-    cursor.execute("SELECT * FROM tasks")
-    tasks = cursor.fetchall()
-    result = []
-    for task in tasks:
-        result.append({'id': task[0], 'taskName': task[1]})
-    return jsonify(result)
+    try:
+        if not db.is_connected():
+            db.reconnect()
+
+        cursor.execute("SELECT * FROM tasks")
+        tasks = cursor.fetchall()
+        result = []
+        for task in tasks:
+            result.append({'id': task[0], 'taskName': task[1]})
+        return jsonify(result)
+    except mysql.connector.Error as err:
+        return jsonify({'error': f"Failed to fetch tasks: {err}"}), 500
+
 
 
 @app.route('/tasks/<int:id>', methods=['GET'])
@@ -63,6 +73,16 @@ def delete_task(id):
     cursor.execute("DELETE FROM tasks WHERE id = %s", (id,))
     db.commit()
     return jsonify({'message': 'Task deleted successfully'})
+
+
+@app.route('/tasks/count', methods=['GET'])
+def get_task_count():
+    cursor.execute("SELECT COUNT(*) FROM tasks")
+    count = cursor.fetchone()[0]
+    if count > 3:
+        # Send email logic here
+        print("Sending email notification: Too many tasks!")
+    return jsonify({'count': count})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

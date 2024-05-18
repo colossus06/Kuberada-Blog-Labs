@@ -8,6 +8,7 @@ import (
     "net/http"
     "bytes"
     "strconv"
+    "io/ioutil"
 )
 
 type Task struct {
@@ -15,16 +16,62 @@ type Task struct {
     TaskName string `json:"taskName"`
 }
 
+type TaskCount struct {
+    Count int `json:"count"`
+}
+
+type Notification struct {
+    Message string
+}
+
 func main() {
     http.HandleFunc("/", indexHandler)
     http.HandleFunc("/tasks", tasksHandler)
     http.HandleFunc("/tasks/edit/", editHandler)
     http.HandleFunc("/tasks/delete/", deleteHandler)
+    http.HandleFunc("/notification", getNotificationHandler)
     http.Handle("/styles/", http.StripPrefix("/styles/", http.FileServer(http.Dir("styles"))))
-
-
     fmt.Println("Server is running on port 8080...")
     log.Fatal(http.ListenAndServe(":8080", nil))
+
+    
+}
+
+func getNotificationHandler(w http.ResponseWriter, r *http.Request) {
+    // Fetch the message from the Rust microservice
+    resp, err := http.Get("http://notification-svc:8083/notification")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer resp.Body.Close()
+
+    // Read the response body
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Parse the HTML template
+    tmpl, err := template.ParseFiles("templates/notification.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Execute the template with the message
+    data := struct {
+        Message string
+    }{
+        Message: string(body),
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
 }
 
 
@@ -53,6 +100,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
+
+
+
 func tasksHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
         taskName := r.FormValue("taskName")
@@ -68,8 +118,10 @@ func tasksHandler(w http.ResponseWriter, r *http.Request) {
             return
         }
 
-        // Send a POST request to the Python backend
-        resp, err := http.Post("http://backend:5000/tasks", "application/json", bytes.NewBuffer(requestBody))
+        // Send a POST request to the Python 10.42.0.50
+        // for kubernetes http://backend-svc:5000/tasks
+        // for docker compose use the name in compose file
+        resp, err := http.Post("http://crud-svc:5000/tasks", "application/json", bytes.NewBuffer(requestBody))
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
@@ -131,8 +183,8 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
             return
         }
 
-        // Send a PUT request to update the task in the Python backend
-        req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("http://backend:5000/tasks/edit/%d", taskId), bytes.NewBuffer(requestBody))
+        // Send a PUT request to update the task in the Python 10.42.0.50
+        req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("http://crud-svc:5000/tasks/edit/%d", taskId), bytes.NewBuffer(requestBody))
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
@@ -172,8 +224,8 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Send a DELETE request to delete the task in the Python backend
-    req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("http://backend:5000/tasks/delete/%d", taskId), nil)
+    // Send a DELETE request to delete the task in the Python 10.42.0.50
+    req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("http://crud-svc:5000/tasks/delete/%d", taskId), nil)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
@@ -196,11 +248,8 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, "/", http.StatusFound)
 }
 
-
-
-
 func getTasks() ([]Task, error) {
-    resp, err := http.Get("http://backend:5000/tasks")
+    resp, err := http.Get("http://crud-svc:5000/tasks")
     if err != nil {
         return nil, err
     }
@@ -215,7 +264,7 @@ func getTasks() ([]Task, error) {
 }
 
 func getTaskById(taskId int) (Task, error) {
-    resp, err := http.Get(fmt.Sprintf("http://backend:5000/tasks/%d", taskId))
+    resp, err := http.Get(fmt.Sprintf("http://crud-svc:5000/tasks/%d", taskId))
     if err != nil {
         return Task{}, err
     }
